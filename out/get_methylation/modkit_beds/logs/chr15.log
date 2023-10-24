@@ -1,2 +1,0 @@
-[src/logging.rs::54][2023-10-24 11:27:15][DEBUG] command line: /data/solarsj/tools/modkit/modkit pileup --threads 32 --ref /data/Phillippy/projects/chm13_rdna_methylation_reanalysis/45S_methyl_caller/KY962518-ROT.fa.gz --cpg --combine-strands --ignore h --only-tabs --log modkit_beds/logs/chr15.log ../alignment/chr15.bam modkit_beds/chr15.bed
-[src/bin/main.rs::20][2023-10-24 11:27:15][ERROR] Error! file not found: ../alignment/chr15.bam

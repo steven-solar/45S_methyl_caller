@@ -8,8 +8,8 @@ bash pipeline.sh $fastq_path $45S_ref $out_dir
 
 General pipeline:
 1. makes file structure for outputs
-2. maps ONT reads to 45S ref (or any ref you give it)
-3. splits up the alignments to get one alignment per file (filters out suspected chimeric reads with inverted 45S units)
+2. maps ONT reads to 45S ref (or any ref you give it), filters for 90% alignment block and 90% identity, filters out suspected chimeric reads (identified as containing inverted 45S units)
+3. splits up the alignments to get one alignment per file
 4. calls modkit on these split alignments, getting per read methylation info (also calls on all reads per category)
 5. summarizes data at the per group level, and the per unit level
 6. ordering analysis: are neighboring units methylated more similarly than random units?
