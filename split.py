@@ -1,6 +1,6 @@
 import sys
 
-chr = sys.argv[1]
+group = sys.argv[1]
 header_f = open(sys.argv[2])
 header=''
 for line in header_f:
@@ -18,7 +18,7 @@ for line in sys.stdin:
         readname_to_counts[read]+=1
     else:
         readname_to_counts[read]=1
-    out_f = open('read_breakdown/' + chr + '/' + read + '/' + str(readname_to_counts[read]) + '.sam', 'w')
+    out_f = open('read_breakdown/' + group + '/' + read + '/' + str(readname_to_counts[read]) + '.sam', 'w')
     out_f.write(header)
     out_f.write('\t'.join(line_split))
     out_f.close()

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_DIR=/data/Phillippy/projects/chm13_rdna_methylation_reanalysis
+BASE_DIR=$(pwd)
 fastq_path=$1
 ref=$2
 out_dir=$3

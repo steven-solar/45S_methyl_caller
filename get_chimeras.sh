@@ -9,7 +9,6 @@ else
     for chimera in ${chimeras[@]}; do
         grep_str+="$chimera|"
     done
-
     grep_str=${grep_str::-1}
     echo $grep_str
 fi 
