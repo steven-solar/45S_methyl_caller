@@ -22,5 +22,5 @@ cd ../methylation_analysis
 
 bash $BASE_DIR/get_read_summary.sh
 
-python $BASE_DIR/run_ordering_analysis.py read_summary.txt > ordering_analysis.out
+python $BASE_DIR/run_ordering_analysis.py read_summary.txt > ordering_analysis.txt
 python $BASE_DIR/violin_plot.py read_summary.txt $prefix
