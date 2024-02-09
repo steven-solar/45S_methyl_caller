@@ -4,7 +4,7 @@ import re
 def overlap(curr_region, wanted_region):
 	if curr_region[1] < wanted_region[0] or curr_region[0] > wanted_region[1]:
 		return 0
-	overlap = min(curr_region[1], wanted_region[1]) - max(curr_region[0] - wanted_region[0])
+	overlap = min(curr_region[1], wanted_region[1]) - max(curr_region[0], wanted_region[0])
 	return overlap / (wanted_region[1] - wanted_region[0])
 
 def subregion_ani(t_region, wanted_region, cigar):
@@ -40,9 +40,10 @@ if len(sys.argv) > 4:
 	else:
 		verbose=True
 
-regex_str = 'de:f:((0|\d+)\.?\d*)'
+sam_lines = []
+paf_lines = []
+regex_str = 'de:f:((0|\d+)\.\d+)'
 for paf_line, sam_line in zip(paf_f, sam_no_header_f):
-	if verbose: print(sam_line.strip())
 	paf_line_split = paf_line.strip().split('\t')
 	sam_line_split = sam_line.strip().split('\t')
 	t_start, t_end = int(paf_line_split[7]), int(paf_line_split[8])
@@ -50,20 +51,48 @@ for paf_line, sam_line in zip(paf_f, sam_no_header_f):
 	if want_subregion:
 		if overlap((t_start, t_end), subregion) >= 0.9:
 			if subregion_ani((t_start, t_end), subregion, cigar) >= 0.9:
-				if output_type == 'sam':
-					print(sam_line.strip())
-				elif output_type == 'paf':
-					print(paf_line.strip())
+				sam_lines.append(sam_line.strip())
+				paf_lines.append(paf_line.strip())
 	else:
 		q_len, matching_bases, aln_block = int(paf_line_split[6]), int(paf_line_split[9]), int(paf_line_split[10])
-		de_flag = re.findall(regex_str, sam_line)[0][0]
-		ani = 1 - float(de_flag)
-		if verbose: print(paf_line.strip())
-		if verbose: print(aln_block, 0.9*q_len, ani)
-		if aln_block >= 0.9 * q_len and ani >= 0.9:
-			if verbose: print('keep')
-			if output_type == 'sam':
-				print(sam_line.strip())
-			elif output_type == 'paf':
-				print(paf_line.strip())
-		if verbose: print('-----')
+		try:
+			de_flag = re.findall(regex_str, sam_line)[0][0]
+			ani = 1 - float(de_flag)
+		except:
+			ani = 0
+		if verbose:
+			print(paf_line.strip())
+			print(aln_block, 0.75*q_len, ani)
+		if aln_block >= 0.7 * q_len and ani >= 0.8:
+			if verbose:
+				print('keep')
+			sam_lines.append(sam_line.strip())
+			paf_lines.append(paf_line.strip())
+		if verbose:
+			print('-----')
+
+if output_type == 'sam':
+	for line in sam_lines:
+		print(line)
+if output_type == 'paf':
+	for line in paf_lines:
+		print(line)
+
+# intervals = []
+# for i in range(len(paf_lines)):
+# 	paf_line_split = paf_lines[i].split('\t')
+# 	start, end = int(paf_line_split[2]), int(paf_line_split[3])
+# 	overlaps = False
+# 	for interval in intervals:
+# 		if verbose:
+# 			print((start,end), interval, overlap((start,end), interval))
+# 		if overlap((start,end), interval) >= 0.75:
+# 			overlaps = True
+# 	intervals.append((start,end))
+# 	if not overlaps:
+# 		if output_type == 'sam':
+# 			print(sam_lines[i].strip())
+# 		elif output_type == 'paf':
+# 			print(paf_lines[i].strip())
+# 	if verbose:
+# 		print('-----')

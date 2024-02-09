@@ -25,17 +25,21 @@ def subregion_ani(t_region, wanted_region, cigar):
 sam_no_header_f = open(sys.argv[1])
 paf_f = open(sys.argv[2])
 output_type = sys.argv[3]
+if len(sys.argv) > 4:
+	pi_cutoff = int(sys.argv[4])/100
+else:
+	pi_cutoff = 0.9
 
 want_subregion=False
 verbose=False
-if len(sys.argv) > 4:
-	if '.bed' in sys.argv[4]:
+if len(sys.argv) > 5:
+	if '.bed' in sys.argv[5]:
 		want_subregion=True
-		bed_f = open(sys.argv[4])
+		bed_f = open(sys.argv[5])
 		for line in bed_f:
 			line_split = line.strip().split('\t')
 			subregion = (int(line_split[1]), int(line_split[2]))
-		if len(sys.argv) > 5:
+		if len(sys.argv) > 6:
 			verbose=True
 	else:
 		verbose=True
@@ -48,8 +52,8 @@ for paf_line, sam_line in zip(paf_f, sam_no_header_f):
 	t_start, t_end = int(paf_line_split[7]), int(paf_line_split[8])
 	cigar = re.findall('cg:Z:(\w+)', paf_line)[0]
 	if want_subregion:
-		if overlap((t_start, t_end), subregion) >= 0.9:
-			if subregion_ani((t_start, t_end), subregion, cigar) >= 0.9:
+		if overlap((t_start, t_end), subregion) >= pi_cutoff:
+			if subregion_ani((t_start, t_end), subregion, cigar) >= pi_cutoff:
 				if output_type == 'sam':
 					print(sam_line.strip())
 				elif output_type == 'paf':
@@ -59,8 +63,8 @@ for paf_line, sam_line in zip(paf_f, sam_no_header_f):
 		de_flag = re.findall(regex_str, sam_line)[0][0]
 		ani = 1 - float(de_flag)
 		if verbose: print(paf_line.strip())
-		if verbose: print(aln_block, 0.9*q_len, ani)
-		if aln_block >= 0.9 * q_len and ani >= 0.9:
+		if verbose: print(aln_block, pi_cutoff*q_len, ani)
+		if aln_block >= pi_cutoff * q_len and ani >= pi_cutoff:
 			if verbose: print('keep')
 			if output_type == 'sam':
 				print(sam_line.strip())
