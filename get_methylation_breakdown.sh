@@ -18,7 +18,7 @@ get_meth_read()
 	out_dir=$4
 	readname=$5
 	subregion_bed=$6
-	
+
 	echo $readname
 	path=$out_dir/get_methylation/read_breakdown/$group/$readname
 	mkdir -p $path $path/modkit_beds $path/logs
@@ -27,7 +27,7 @@ get_meth_read()
 		echo $num
 		if [[ $# -eq 5 ]]; then
 			modkit pileup \
-				--threads $cpus \
+				--threads 1 \
 				--ref $ref \
 				--cpg \
 				--combine-strands \
@@ -40,7 +40,7 @@ get_meth_read()
 			subregion_bed=$5
 			subregion=$(awk '{printf "%s:%d-%d", $1, $2, $3}' $subregion_bed)
 			modkit pileup \
-				--threads $cpus \
+				--threads 1 \
 				--ref $ref \
 				--region $subregion \
 				--cpg \
