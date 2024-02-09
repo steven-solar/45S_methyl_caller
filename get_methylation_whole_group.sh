@@ -1,12 +1,13 @@
 #!/bin/bash
 
+ml load modkit 
+
 if [ -z ${SLURM_CPUS_PER_TASK+x} ]; then
     cpus=32
 else
     cpus=$SLURM_CPUS_PER_TASK
 fi
 
-MODKIT=$my_tools/modkit
 SCRIPT_DIR=$1
 ref=$2
 group=$3
@@ -19,7 +20,7 @@ if [[ $(samtools view -@$cpus -c $out_dir/alignment/$group.bam) -eq 0 ]]; then
 fi
 
 if [[ $# -eq 4 ]]; then
-	$MODKIT/modkit pileup \
+	modkit pileup \
 		--threads $cpus \
 		--ref $ref \
 		--cpg \
@@ -32,7 +33,7 @@ if [[ $# -eq 4 ]]; then
 else
 	subregion_bed=$5
 	subregion=$(awk '{printf "%s:%d-%d", $1, $2, $3}' $subregion_bed)
-	$MODKIT/modkit pileup \
+	modkit pileup \
 		--threads $cpus \
 		--ref $ref \
 		--region $subregion \

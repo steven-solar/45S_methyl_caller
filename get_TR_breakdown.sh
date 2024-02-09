@@ -10,7 +10,6 @@ fi
 
 get_TRs_read()
 {
-	MODKIT=$my_tools/modkit
 	SCRIPT_DIR=$1
 	group=$2
 	out_dir=$3
@@ -41,7 +40,6 @@ get_TRs_read()
 	done
 }
 
-MODKIT=$my_tools/modkit
 SCRIPT_DIR=$1
 group=$2
 out_dir=$3
