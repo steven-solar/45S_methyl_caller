@@ -1,10 +1,18 @@
 # 45S_methyl_caller
 Call as:
 ```
-bash pipeline.sh $fastq_path $45S_ref $out_dir
+bash run_pipeline.sh $SCRIPT_DIR $alns.bam $chrs.txt $KY_ref.fa $out_dir $genome.bed $18S.fa $45S_on_KY.bed $TR_unit.fa
 ```
 
-`fastq_path` should contain fastq/fasta files (can be compressed or uncompressed) labeled with their group names (ie. `hap1.fasta`, `chr14.fastq.gz`, `species.fq`, `individual.fa`), these group names will be carried through the rest of the analysis.
+`$SCRIPT_DIR` directory of this code
+`$alns.bam` ONT aligned to chm13 passed
+`$chrs.txt` list of newline separated chromosomes of interest (ie. the acros)
+`$KY_ref.fa` path to the KY_ROT reference 
+`$out_dir` path to directory where you want results
+`$genome.bed` bed file for calculating genome coverage
+`$18S.fa` reference of the 18S rRNA gene for estimating copy number
+`$45S_on_KY.bed` bed file of the 45S gene on the KY_rot reference for getting methylation of just the gene
+`$TR_unit.fa` the reference sequence of a canonical TR unit for estimating copy number in rdna units 
 
 General pipeline:
 1. makes file structure for outputs
