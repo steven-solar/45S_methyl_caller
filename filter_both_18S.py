@@ -25,21 +25,26 @@ def subregion_ani(t_region, wanted_region, cigar):
 sam_no_header_f = open(sys.argv[1])
 paf_f = open(sys.argv[2])
 output_type = sys.argv[3]
-if len(sys.argv) > 4:
+if len(sys.argv) == 5:
 	pi_cutoff = int(sys.argv[4])/100
+	aln_cutoff = int(sys.argv[4])/100
+elif len(sys.argv) == 6:
+	pi_cutoff = int(sys.argv[4])/100
+	aln_cutoff = int(sys.argv[5])/100
 else:
 	pi_cutoff = 0.9
+	aln_cutoff = 0.9
 
 want_subregion=False
 verbose=False
-if len(sys.argv) > 5:
+if len(sys.argv) > 6:
 	if '.bed' in sys.argv[5]:
 		want_subregion=True
 		bed_f = open(sys.argv[5])
 		for line in bed_f:
 			line_split = line.strip().split('\t')
 			subregion = (int(line_split[1]), int(line_split[2]))
-		if len(sys.argv) > 6:
+		if len(sys.argv) > 7:
 			verbose=True
 	else:
 		verbose=True
@@ -63,8 +68,8 @@ for paf_line, sam_line in zip(paf_f, sam_no_header_f):
 		de_flag = re.findall(regex_str, sam_line)[0][0]
 		ani = 1 - float(de_flag)
 		if verbose: print(paf_line.strip())
-		if verbose: print(aln_block, pi_cutoff*q_len, ani)
-		if aln_block >= pi_cutoff * q_len and ani >= pi_cutoff:
+		if verbose: print(aln_block, aln_cutoff*q_len, ani)
+		if aln_block >= aln_cutoff * q_len and ani >= pi_cutoff:
 			if verbose: print('keep')
 			if output_type == 'sam':
 				print(sam_line.strip())

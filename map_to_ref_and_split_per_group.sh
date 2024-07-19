@@ -97,7 +97,6 @@ minimap2 \
     $fastq \
     | samtools view -@$cpus -F 260 -h -O SAM -o $temp_prefix.sam
 
-# samtools view -@$cpus -h -O SAM -o $temp_prefix.sam $temp_prefix.bam 
 samtools view -@$cpus $temp_prefix.sam > $temp_prefix.no_header.sam
 samtools view -@$cpus -H $temp_prefix.sam > $temp_prefix.just_header.sam
 
@@ -123,26 +122,18 @@ fi
 num_alns=$(cat $prefix.paf | wc -l)
 echo -e "final alignments (reads to ref) $num_alns"
 
-# rm -f $out_dir/alignment/logs/$group.breakdown_jids.txt
-# touch $out_dir/alignment/logs/$group.breakdown_jids.txt
+# if [[ $num_alns -gt 0 ]]; then
+#     breakdown_dir=$out_dir/alignment/read_breakdown/$group
+#     mkdir -p $breakdown_dir
+#     while read first_char; do
+#         echo $first_char
+#         split_on_char $SCRIPT_DIR $breakdown_dir $prefix $temp_prefix $fastq $first_char &
+#     done < <(samtools view -@$cpus $prefix.bam | awk '{print substr($1,1,1)}' | sort -u) 
+#     wait `jobs -p`
+# fi
 
-if [[ $num_alns -gt 0 ]]; then
-    breakdown_dir=$out_dir/alignment/read_breakdown/$group
-    mkdir -p $breakdown_dir
-    while read first_char; do
-        echo $first_char
-        # $SCRIPT_DIR/split_by_char.sh $SCRIPT_DIR $breakdown_dir $prefix $temp_prefix $fastq $first_char
-        split_on_char $SCRIPT_DIR $breakdown_dir $prefix $temp_prefix $fastq $first_char &
-        # jid=$(sbatch \
-        #     --time=08:00:00 \
-        #     --mem=8g \
-        #     --cpus-per-task=4 \
-        #     -o $out_dir/alignment/logs/$group.breakdown_$first_char.out \
-        #     $SCRIPT_DIR/split_by_char.sh $SCRIPT_DIR $breakdown_dir $prefix $temp_prefix $fastq $first_char)
-        # echo $jid >> $out_dir/alignment/logs/$group.breakdown_jids.txt
-    done < <(samtools view -@$cpus $prefix.bam | awk '{print substr($1,1,1)}' | sort -u) 
-    # while [ 1 ]; do fg 2> /dev/null; [ $? == 1 ] && break; done
-    wait `jobs -p`
-fi
+rm -r $out_dir/alignment/temp/$group.*
+rm -r $out_dir/alignment/$group.paf
+rm -r $out_dir/alignment/$group.bed
 
 touch $out_dir/alignment/logs/$group.success.txt

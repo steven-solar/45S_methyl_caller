@@ -2,11 +2,12 @@
 
 SCRIPT_DIR=$1
 out_dir=$2
-doing_tr=$3
+doing_subregion=$3
+doing_tr=$4
 
 rm -f $out_dir/final_analysis/*.png
 
-bash $SCRIPT_DIR/get_read_summary.sh $SCRIPT_DIR $out_dir
+bash $SCRIPT_DIR/get_read_summary.sh $SCRIPT_DIR $out_dir $doing_subregion $doing_tr
 
 # if [[ $# -gt 2 ]]; then
 # 	bash $SCRIPT_DIR/get_read_summary.sh $SCRIPT_DIR $out_dir 1

@@ -26,9 +26,10 @@ minimap2 \
     -Y \
     $ref \
     $fastq \
-| samtools sort -@$cpus -O BAM --write-index -o $temp_prefix.nofilter.bam##idx##$temp_prefix.nofilter.bam.bai -
+| samtools sort -@$cpus -O BAM --write-index -o $temp_prefix.nofilt.bam##idx##$temp_prefix.nofilt.bam.bai -
+# | samtools sort -@$cpus -O BAM --write-index -o $temp_prefix.nofilter.bam##idx##$temp_prefix.nofilter.bam.bai -
 
-samtools view -@$cpus -F 260 -h -O BAM --write-index -o $temp_prefix.bam##idx##$temp_prefix.bam.bai $temp_prefix.nofilter.bam
+samtools view -@$cpus -F 260 -h -O BAM --write-index -o $temp_prefix.bam##idx##$temp_prefix.bam.bai $temp_prefix.nofilt.bam
 
 samtools view -@$cpus -h -O SAM -o $temp_prefix.sam $temp_prefix.bam 
 samtools view -@$cpus $temp_prefix.bam > $temp_prefix.no_header.sam
@@ -36,8 +37,8 @@ samtools view -@$cpus -H $temp_prefix.bam > $temp_prefix.just_header.sam
 
 paftools.js sam2paf $temp_prefix.sam > $temp_prefix.paf
 
-python $SCRIPT_DIR/filter_both_18S.py $temp_prefix.no_header.sam $temp_prefix.paf sam 85 > $temp_prefix.filtered.sam
-python $SCRIPT_DIR/filter_both_18S.py $temp_prefix.no_header.sam $temp_prefix.paf paf 85 > $temp_prefix.filtered.paf
+python $SCRIPT_DIR/filter_both_18S.py $temp_prefix.no_header.sam $temp_prefix.paf sam 95 95 > $temp_prefix.filtered.sam
+python $SCRIPT_DIR/filter_both_18S.py $temp_prefix.no_header.sam $temp_prefix.paf paf 95 95 > $temp_prefix.filtered.paf
 
 awk '{print $1, $3, $4, $5}' $temp_prefix.filtered.paf > $temp_prefix.filtered.bed
 bash $SCRIPT_DIR/get_chimeras_for_python.sh $temp_prefix.filtered.bed > $temp_prefix.chimeras.txt
@@ -63,3 +64,7 @@ if [[ $num_alns -gt 0 ]]; then
         $prefix.bam \
         | awk '{sum+=$3} END {print sum/NR}' > $prefix.18S_cov.txt
 fi
+
+rm -r $out_dir/alignment/18S/temp/$group.*
+rm -r $out_dir/alignment/18S/$group.paf
+rm -r $out_dir/alignment/18S/$group.bed

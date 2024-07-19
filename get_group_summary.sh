@@ -27,4 +27,5 @@ done
 
 avg_meth_pct=$(echo a | awk -v tot_weighted_meth_pct=$tot_weighted_meth_pct -v tot_count=$tot_count 'END { print tot_weighted_meth_pct/tot_count }')
 tot_eighteen_S_cn=$(awk '{sum+=($2*2)} END { print sum }' $out_dir/final_analysis/group_summary.txt)
-echo -e "18S_CN: $tot_eighteen_S_cn\nmeth_pct: $avg_meth_pct" > $out_dir/final_analysis/summary.txt
+active_18S=$(echo a | awk -v avg_meth_pct=$avg_meth_pct -v tot_eighteen_S_cn=$tot_eighteen_S_cn 'END { print tot_eighteen_S_cn*avg_meth_pct }')
+echo -e "18S_CN: $tot_eighteen_S_cn\nmeth_pct: $avg_meth_pct\nactive_18S: $active_18S" > $out_dir/final_analysis/summary.txt
